@@ -2,11 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { AirQualityController } from './air-quality.controller';
 import { AirQualityService } from './air-quality.service';
-import axios from 'axios';
 
 describe('AirQualityController', () => {
   let controller: AirQualityController;
-  let configService: ConfigService;
   let airQualityService: AirQualityService;
 
   beforeEach(async () => {
@@ -22,6 +20,7 @@ describe('AirQualityController', () => {
         {
           provide: AirQualityService,
           useValue: {
+            getNearestCityAirQuality: jest.fn(),
             getMostPollutedDateTime: jest.fn(),
           },
         },
@@ -29,46 +28,43 @@ describe('AirQualityController', () => {
     }).compile();
 
     controller = module.get<AirQualityController>(AirQualityController);
-    configService = module.get<ConfigService>(ConfigService);
     airQualityService = module.get<AirQualityService>(AirQualityService);
   });
 
   describe('getNearestCityAirQuality', () => {
     it('should return air quality data for the nearest city', async () => {
-      // Mock the configService.get method and axios.get method
-      jest.spyOn(configService, 'get').mockReturnValueOnce('mockIqairApiUrl').mockReturnValueOnce('mockApiKey');
-      jest.spyOn(axios, 'get').mockResolvedValueOnce({
-        data: { data: { current: { pollution: 'mockPollutionData' } } },
-      });
+      const mockResult = {
+        "Results": {
+          "pollution": {
+            "ts": "2023-08-19T17:00:00.000Z",
+            "aqius": 26,
+            "mainus": "o3",
+            "aqicn": 20,
+            "maincn": "o3"
+          }
+        }
+      };
+      jest.spyOn(airQualityService, 'getNearestCityAirQuality').mockResolvedValue(mockResult);
 
-      const longitude = 'mockLongitude';
-      const latitude = 'mockLatitude';
+      const longitude = '2.352222';
+      const latitude = '48.856613';
 
       const result = await controller.getNearestCityAirQuality(longitude, latitude);
+      expect(result).toEqual(mockResult);
+      expect(airQualityService.getNearestCityAirQuality).toHaveBeenCalled();
 
-      expect(result).toEqual({ Results: { pollution: 'mockPollutionData' } });
-      expect(configService.get).toHaveBeenCalledWith('IQAIR_API_URL');
-      expect(configService.get).toHaveBeenCalledWith('API_KEY');
-      expect(axios.get).toHaveBeenCalledWith(
-        `mockIqairApiUrlnearest_city?lat=${latitude}&lon=${longitude}&key=mockApiKey`
-      );
     });
 
     it('should throw an error if failed to fetch air quality data', async () => {
-      jest.spyOn(configService, 'get').mockReturnValueOnce('mockIqairApiUrl').mockReturnValueOnce('mockApiKey');
-      jest.spyOn(axios, 'get').mockRejectedValueOnce(new Error('mockError'));
+      jest.spyOn(airQualityService, 'getNearestCityAirQuality').mockRejectedValueOnce(Error('Failed to fetch air quality data'));
 
-      const longitude = 'mockLongitude';
-      const latitude = 'mockLatitude';
+      const longitude = '2.352222';
+      const latitude = '48.856613';
 
       await expect(controller.getNearestCityAirQuality(longitude, latitude)).rejects.toThrowError(
         'Failed to fetch air quality data'
       );
-      expect(configService.get).toHaveBeenCalledWith('IQAIR_API_URL');
-      expect(configService.get).toHaveBeenCalledWith('API_KEY');
-      expect(axios.get).toHaveBeenCalledWith(
-        `mockIqairApiUrlnearest_city?lat=${latitude}&lon=${longitude}&key=mockApiKey`
-      );
+      expect(airQualityService.getNearestCityAirQuality).toHaveBeenCalled();
     });
   });
 

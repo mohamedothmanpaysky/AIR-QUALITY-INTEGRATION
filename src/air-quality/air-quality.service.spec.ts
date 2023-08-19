@@ -40,7 +40,11 @@ describe('AirQualityService', () => {
           data: {
             current: {
               pollution: {
-                // Mock pollution data
+                ts: '2023-08-19T14:00:00.000Z',
+                aqius: 25,
+                mainus: 'o3',
+                aqicn: 19,
+                maincn: 'o3'
               },
             },
           },
@@ -50,17 +54,17 @@ describe('AirQualityService', () => {
       jest.spyOn(configService, 'get').mockReturnValueOnce('mock_api_url');
       jest.spyOn(configService, 'get').mockReturnValueOnce('mock_api_key');
       jest.spyOn(axios, 'get').mockResolvedValueOnce(mockResponse);
-        jest.spyOn(airQualityRepository, 'save').mockResolvedValueOnce(Promise.resolve({
-            id:1,
-            pollution: {
-                ts: '2023-08-19T14:00:00.000Z',
-                aqius: 25,
-                mainus: 'o3',
-                aqicn: 19,
-                maincn: 'o3'
-            },
-            dateTime: '2023-08-19 15:00:00'
-        }));
+      jest.spyOn(airQualityRepository, 'save').mockResolvedValueOnce(Promise.resolve({
+        id: 1,
+        pollution: {
+          ts: '2023-08-19T14:00:00.000Z',
+          aqius: 25,
+          mainus: 'o3',
+          aqicn: 19,
+          maincn: 'o3'
+        },
+        dateTime: '2023-08-19 15:00:00'
+      }));
 
       await service.checkAirQuality();
 
@@ -73,16 +77,64 @@ describe('AirQualityService', () => {
     it('should handle errors when fetching air quality data', async () => {
       jest.spyOn(configService, 'get').mockReturnValueOnce('mock_api_url');
       jest.spyOn(configService, 'get').mockReturnValueOnce('mock_api_key');
-      jest.spyOn(axios, 'get').mockRejectedValueOnce(new Error('Failed to fetch air quality data'));
+      jest.spyOn(axios, 'get').mockRejectedValueOnce(Error('Failed to save air quality data'));
 
-      await service.checkAirQuality();
-
+      await expect(service.checkAirQuality()).rejects.toThrowError(
+        'Failed to save air quality data'
+      );
       expect(configService.get).toHaveBeenCalledWith('IQAIR_API_URL');
       expect(configService.get).toHaveBeenCalledWith('API_KEY');
       expect(axios.get).toHaveBeenCalledWith('mock_api_urlnearest_city?lat=48.856613&lon=2.352222&key=mock_api_key');
     });
   });
+  describe('getNearestCityAirQuality', () => {
+    const configService = new ConfigService(); // Create an instance of your ConfigService
 
+    it('should return air quality data when API call is successful', async () => {
+      const mockResponse = {
+        data: {
+          data: {
+            current: {
+              pollution: {
+                "ts": "2023-08-19T17:00:00.000Z",
+                "aqius": 26,
+                "mainus": "o3",
+                "aqicn": 20,
+                "maincn": "o3"
+              },
+            },
+          },
+        },
+      }
+
+
+      jest.spyOn(axios, 'get').mockResolvedValueOnce(mockResponse);
+
+      const result = await service.getNearestCityAirQuality(0, 0);
+
+      expect(result).toEqual({
+        Results: {
+          pollution: {
+            "ts": "2023-08-19T17:00:00.000Z",
+            "aqius": 26,
+            "mainus": "o3",
+            "aqicn": 20,
+            "maincn": "o3"
+          }
+        }
+      });
+
+
+    });
+
+    it('should throw an error when API call fails', async () => {
+      // Mock the axios.get function to throw an error
+      jest.spyOn(axios, 'get').mockRejectedValueOnce(new Error('Failed to fetch air quality data'));
+
+      // Call the function with sample longitude and latitude
+      await expect(service.getNearestCityAirQuality(0, 0)).rejects.toThrow('Failed to fetch air quality data');
+    });
+  });
   describe('getMostPollutedDateTime', () => {
     it('should return the most polluted date and time', async () => {
       const mockMostPolluted = {

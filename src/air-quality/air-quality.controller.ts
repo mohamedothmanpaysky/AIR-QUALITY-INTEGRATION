@@ -13,15 +13,7 @@ export class AirQualityController {
     @Query('longitude') longitude: string,
     @Query('latitude') latitude: string,
   ): Promise<any> {
-    const url = `${this.configService.get('IQAIR_API_URL')}nearest_city?lat=${latitude}&lon=${longitude}&key=${this.configService.get('API_KEY')}`;
-
-    try {
-        const response = await axios.get(url);
-        const pollutionData = response.data.data.current.pollution;
-        return { Results: { pollution: pollutionData } };
-    } catch (error) {
-        throw new Error('Failed to fetch air quality data');
-    }
+      return this.airQualityService.getNearestCityAirQuality(longitude ,latitude );
   }
   @Get('most-polluted-datetime')
   async getMostPollutedDateTime(): Promise<any> {
