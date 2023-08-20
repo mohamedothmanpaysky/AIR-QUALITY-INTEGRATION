@@ -21,7 +21,8 @@ docker-compose up
 docker-compose up 
 ```
 - Swagger API Docs : http://127.0.0.1:3000/api
-  ![Screenshot 2023-08-19 191420](https://github.com/mohamedothmanpaysky/AIR-QUALITY-INTEGRATION/assets/139962104/fce3c5e8-1a58-4b6d-a55a-570fb7aa5294)
+  ![Screenshot 2023-08-19 191306](https://github.com/mohamedothmanpaysky/AIR-QUALITY-INTEGRATION/assets/139962104/b31db9da-2462-470b-b86b-c603d2922a7c)
+
 - Postman Collection DOcumentation : https://www.postman.com/dark-meadow-21984/workspace/nestjs/collection/2084977-882511c1-76d8-485c-969b-c6540caa226b?action=share&creator=2084977
 
 
@@ -45,7 +46,7 @@ $ npm run start:prod
 ```
 
 ## Test
-![Screenshot 2023-08-19 191306](https://github.com/mohamedothmanpaysky/AIR-QUALITY-INTEGRATION/assets/139962104/b31db9da-2462-470b-b86b-c603d2922a7c)
+![Screenshot 2023-08-19 191420](https://github.com/mohamedothmanpaysky/AIR-QUALITY-INTEGRATION/assets/139962104/fce3c5e8-1a58-4b6d-a55a-570fb7aa5294)
 
 ```bash
 # unit tests
