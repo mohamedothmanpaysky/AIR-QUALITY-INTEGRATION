@@ -19,6 +19,7 @@ docker-compose up
 ## How it works
 ```
 docker-compose up 
+
 ```
 - Swagger API Docs : http://127.0.0.1:3000/api
   ![Screenshot 2023-08-19 191306](https://github.com/mohamedothmanpaysky/AIR-QUALITY-INTEGRATION/assets/139962104/b31db9da-2462-470b-b86b-c603d2922a7c)
@@ -46,7 +47,7 @@ $ npm run start:prod
 ```
 
 ## Test
-![Screenshot 2023-08-19 191420](https://github.com/mohamedothmanpaysky/AIR-QUALITY-INTEGRATION/assets/139962104/fce3c5e8-1a58-4b6d-a55a-570fb7aa5294)
+![Screenshot 2023-08-19 183155](https://github.com/mohamedothmanpaysky/AIR-QUALITY-INTEGRATION/assets/139962104/e7d31b56-45e3-4c96-ade1-8b2246a3dd23)
 
 ```bash
 # unit tests
