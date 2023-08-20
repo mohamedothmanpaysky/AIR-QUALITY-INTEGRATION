@@ -15,7 +15,7 @@ export class AirQualityService {
     private readonly configService: ConfigService
   ) { }
 
-  @Cron('*/300 * * * *') // Run every 1 minute
+  @Cron('*/1 * * * *') // Run every 1 minute
   async checkAirQuality() {
     const latitude = 48.856613;
     const longitude = 2.352222;
